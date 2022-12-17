@@ -29,6 +29,7 @@ public abstract class CliArguments {
     protected boolean isFindingPreviousAuthorsPerformed;
     protected boolean isTestMode = ArgsParser.DEFAULT_IS_TEST_MODE;
     protected boolean isFreshClonePerformed = ArgsParser.DEFAULT_SHOULD_FRESH_CLONE;
+    protected boolean isPrettyPrintingRequired;
 
     public ZoneId getZoneId() {
         return zoneId;
@@ -102,6 +103,10 @@ public abstract class CliArguments {
         return isFreshClonePerformed;
     }
 
+    public boolean isPrettyPrintingRequired() {
+        return isPrettyPrintingRequired;
+    }
+
     @Override
     public boolean equals(Object other) {
         // short circuit if same object
@@ -132,6 +137,7 @@ public abstract class CliArguments {
                 && this.isFindingPreviousAuthorsPerformed == otherCliArguments.isFindingPreviousAuthorsPerformed
                 && this.isFileSizeLimitIgnored == otherCliArguments.isFileSizeLimitIgnored
                 && this.isTestMode == otherCliArguments.isTestMode
-                && this.isFreshClonePerformed == otherCliArguments.isFreshClonePerformed;
+                && this.isFreshClonePerformed == otherCliArguments.isFreshClonePerformed
+                && this.isPrettyPrintingRequired == otherCliArguments.isPrettyPrintingRequired;
     }
 }

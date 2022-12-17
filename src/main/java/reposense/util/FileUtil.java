@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -61,6 +60,8 @@ public class FileUtil {
     private static final String MESSAGE_FAIL_TO_COPY_ASSETS =
             "Exception occurred while attempting to copy custom assets.";
 
+    private static boolean isPrettyPrintingRequired = false;
+
     /**
      * Zips all files of type {@code fileTypes} that are in the directory {@code pathsToZip} into a single file and
      * output it to {@code sourceAndOutputPath}.
@@ -103,18 +104,23 @@ public class FileUtil {
      * was an error while writing the JSON file.
      */
     public static Optional<Path> writeJsonFile(Object object, String path) {
-        Gson gson = new GsonBuilder()
+        GsonBuilder gsonBuilder = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (date, typeOfSrc, context)
                         -> new JsonPrimitive(date.format(DateTimeFormatter.ofPattern(GITHUB_API_DATE_FORMAT))))
-                .registerTypeAdapter(FileType.class, new FileType.FileTypeSerializer())
-                .registerTypeAdapter(ZoneId.class, (JsonSerializer<ZoneId>) (zoneId, typeOfSrc, context)
-                        -> new JsonPrimitive(zoneId.toString()))
-                .create();
+                .registerTypeAdapter(FileType.class, new FileType.FileTypeSerializer());
+
+        Gson gson = isPrettyPrintingRequired ? gsonBuilder.setPrettyPrinting().create() : gsonBuilder.create();
+
+        System.out.println(isPrettyPrintingRequired ? "Utilizing Pretty Print" : "Not Utilizing Pretty Print");
+
+//        JsonElement jsonElement = JsonParser.parseString(object.toString());
 
         // Gson serializer from:
         // https://stackoverflow.com/questions/39192945/serialize-java-8-localdate-as-yyyy-mm-dd-with-gson
 
         String result = gson.toJson(object);
+
+//        String result = gson.toJson(jsonElement);
 
         try (PrintWriter out = new PrintWriter(path)) {
             out.print(result);
@@ -376,5 +382,12 @@ public class FileUtil {
      */
     private static boolean isFileTypeInPath(Path path, String... fileTypes) {
         return Arrays.stream(fileTypes).anyMatch(path.toString()::endsWith);
+    }
+
+    /**
+     * Sets the variable {@code isPrettyPrintingRequired} to format the file accordingly.
+     */
+    public static void setIsPrettyPrintingRequired(boolean isPrettyPrintingActuallyRequired) {
+        isPrettyPrintingRequired = isPrettyPrintingActuallyRequired;
     }
 }

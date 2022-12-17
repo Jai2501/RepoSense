@@ -1,5 +1,6 @@
 package reposense;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -53,11 +54,18 @@ public class RepoSense {
      * Additional flags are provided by the user in {@code args}.
      */
     public static void main(String[] args) {
+
+        // Hardcoding the args for testing purposes
+//        args = new String[] {"--repos", "https://github.com/Jai2501/RepoSense", "--view", "--use-json-pretty-printing",
+//                "--since",  "31/1/2021", "--until", "03/12/2022"};
+
         try {
             TimeUtil.startTimer();
             CliArguments cliArguments = ArgsParser.parse(args);
             List<RepoConfiguration> configs = null;
             ReportConfiguration reportConfig = new ReportConfiguration();
+
+            FileUtil.setIsPrettyPrintingRequired(cliArguments.isPrettyPrintingRequired());
 
             if (cliArguments instanceof ViewCliArguments) {
                 ReportServer.startServer(SERVER_PORT_NUMBER, ((
