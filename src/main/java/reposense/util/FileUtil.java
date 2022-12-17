@@ -111,16 +111,10 @@ public class FileUtil {
 
         Gson gson = isPrettyPrintingRequired ? gsonBuilder.setPrettyPrinting().create() : gsonBuilder.create();
 
-        System.out.println(isPrettyPrintingRequired ? "Utilizing Pretty Print" : "Not Utilizing Pretty Print");
-
-//        JsonElement jsonElement = JsonParser.parseString(object.toString());
-
         // Gson serializer from:
         // https://stackoverflow.com/questions/39192945/serialize-java-8-localdate-as-yyyy-mm-dd-with-gson
 
         String result = gson.toJson(object);
-
-//        String result = gson.toJson(jsonElement);
 
         try (PrintWriter out = new PrintWriter(path)) {
             out.print(result);
