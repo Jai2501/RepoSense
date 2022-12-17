@@ -53,6 +53,9 @@ public class RepoSense {
      * Additional flags are provided by the user in {@code args}.
      */
     public static void main(String[] args) {
+        args = new String[] {"--repos", "https://github.com/reposense/RepoSense.git", "--view", "--since",
+                "01/01/2017", "--until", "03/12/2021"};
+
         try {
             TimeUtil.startTimer();
             CliArguments cliArguments = ArgsParser.parse(args);
