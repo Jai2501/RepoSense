@@ -1,6 +1,5 @@
 package reposense;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -56,8 +55,8 @@ public class RepoSense {
     public static void main(String[] args) {
 
         // Hardcoding the args for testing purposes
-//        args = new String[] {"--repos", "https://github.com/Jai2501/RepoSense", "--view", "--use-json-pretty-printing",
-//                "--since",  "31/1/2021", "--until", "03/12/2022"};
+        // args = new String[] {"--repos", "https://github.com/Jai2501/RepoSense", "--view",
+        //         "--use-json-pretty-printing", "--since",  "31/1/2021", "--until", "03/12/2022"};
 
         try {
             TimeUtil.startTimer();
