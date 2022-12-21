@@ -4,13 +4,13 @@
       <span>Commits Panel</span>
     </div>
     <div class="toolbar--multiline" v-if="filteredUser.commits.length && totalCommitMessageBodyCount">
-      <a 
-        v-if="expandedCommitMessagesCount < totalCommitMessageBodyCount" 
+      <a
+        v-if="expandedCommitMessagesCount < totalCommitMessageBodyCount"
         v-on:click="toggleAllCommitMessagesBody(true)">
         show all commit messages
       </a>
-      <a 
-        v-if="expandedCommitMessagesCount > 0" 
+      <a
+        v-if="expandedCommitMessagesCount > 0"
         v-on:click="toggleAllCommitMessagesBody(false)">
         hide all commit messages
       </a>
@@ -20,9 +20,9 @@
         <span v-if="info.zFilterGroup === 'groupByAuthors'">
           {{ filteredUser.displayName }} ({{ filteredUser.name }})
         </span>
-        <a 
+        <a
           v-else
-          v-bind:href="info.zLocation" 
+          v-bind:href="info.zLocation"
           target="_blank"
           v-bind:title="'Click to open the repo'">
             <span>{{ filteredUser.repoName }}</span>
@@ -101,7 +101,7 @@
           <input type="checkbox" class="mui-checkbox--fileType" v-model="isSelectAllChecked" value="all">
           <span>All&nbsp;</span>
         </label>
-        <label 
+        <label
           v-for="fileType in fileTypes"
           v-bind:key="fileType"
           v-bind:style="{
@@ -138,7 +138,7 @@
           <span>{{ slice.hash.substr(0, 7) }}</span>
         </div>
         <div class="fileTypeLabelDiv" v-if="containsAtLeastOneSelected(Object.keys(slice.fileTypesAndContributionMap))">
-          <span class="fileTypeLabel" 
+          <span class="fileTypeLabel"
             :key="fileType"
             v-for="fileType in Object.keys(slice.fileTypesAndContributionMap)"
             :style="{
@@ -149,7 +149,7 @@
         </span>
         </div>
         <template v-if="slice.tags">
-          <div class="tag" 
+          <div class="tag"
             :key="tag"
             v-for="tag in slice.tags"
             tabindex="-1"
@@ -159,7 +159,7 @@
             <span>&nbsp;{{ tag }}</span>
           </div>
         </template>
-        <a 
+        <a
           v-if="slice.messageBody !== ''"
           v-on:click="updateExpandedCommitMessagesCount"
           onclick="toggleNext(this)">

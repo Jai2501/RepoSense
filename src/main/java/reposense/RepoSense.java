@@ -54,6 +54,9 @@ public class RepoSense {
      */
     public static void main(String[] args) {
         try {
+            args = new String[] {"--repos", "https://github.com/reposense/RepoSense.git", "--since",
+                    "31/1/2017", "--until", "31/12/2018", "--view"};
+
             TimeUtil.startTimer();
             CliArguments cliArguments = ArgsParser.parse(args);
             List<RepoConfiguration> configs = null;
