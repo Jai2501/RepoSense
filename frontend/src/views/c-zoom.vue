@@ -1,135 +1,185 @@
-<template lang="pug">
-#zoom
-  .panel-title
-    span Commits Panel
-  .toolbar--multiline(v-if="filteredUser.commits.length && totalCommitMessageBodyCount")
-    a(
-      v-if="expandedCommitMessagesCount < totalCommitMessageBodyCount",
-      v-on:click="toggleAllCommitMessagesBody(true)"
-    ) show all commit messages
-    a(
-      v-if="expandedCommitMessagesCount > 0",
-      v-on:click="toggleAllCommitMessagesBody(false)"
-    ) hide all commit messages
-  .panel-heading
-    .group-name
-      span(
-        v-if="info.zFilterGroup === 'groupByAuthors'"
-      ) {{ filteredUser.displayName }} ({{ filteredUser.name }})
-      a(
-        v-else,
-        v-bind:href="info.zLocation", target="_blank",
-        v-bind:title="'Click to open the repo'"
-      )
-        span {{ filteredUser.repoName }}
-    .author(v-if="!info.zIsMerge")
-      span &#8627; &nbsp;
-      span(v-if="info.zFilterGroup === 'groupByAuthors'") {{ filteredUser.repoName }}
-      span(v-else) {{ filteredUser.displayName }} ({{ filteredUser.name }})
-    .period
-      span &#8627; &nbsp;
-      span {{ info.zSince }} to {{ info.zUntil }} &nbsp;
-  .zoom__title
-    .zoom__title--granularity granularity: one ramp per {{ info.zTimeFrame }}
-    .zoom__title--tags
-      template(v-for="commit in filteredUser.commits")
-        template(v-for="commitResult in commit.commitResults")
-          template(v-if="commitResult.tags")
-            .tag(
-              v-for="tag in commitResult.tags",
-              vbind:key="tag",
-              v-on:click="scrollToCommit(tag, `tag ${commitResult.hash}`)"
-            )
-              font-awesome-icon(icon="tags")
-              span &nbsp;{{ tag }}
-
-  c-ramp(
-    v-bind:groupby="info.zFilterGroup",
-    v-bind:user="filteredUser",
-    v-bind:tframe="info.zTimeFrame",
-    v-bind:sdate="info.zSince",
-    v-bind:udate="info.zUntil",
-    v-bind:avgsize="info.zAvgCommitSize",
-    v-bind:mergegroup="info.zIsMerge",
-    v-bind:fromramp="info.zFromRamp",
-    v-bind:filtersearch="info.zFilterSearch")
-
-  .sorting.mui-form--inline
-    .mui-select.sort-by
-      select(v-model="commitsSortType")
-        option(value="time") Time
-        option(value="lineOfCode") LoC
-      label sort by
-    .mui-select.sort-order
-      select(v-model="toReverseSortedCommits")
-        option(v-bind:value='true') Descending
-        option(v-bind:value='false') Ascending
-      label order
-
-  .fileTypes
-    .checkboxes.mui-form--inline(v-if="fileTypes.length > 0")
-      label(style='background-color: #000000; color: #ffffff')
-        input.mui-checkbox--fileType(type="checkbox", v-model="isSelectAllChecked", value="all")
-        span All&nbsp;
-      label(
-        v-for="fileType in fileTypes",
-        v-bind:key="fileType",
-        v-bind:style="{\
-                'background-color': fileTypeColors[fileType],\
-                'color': getFontColor(fileTypeColors[fileType])\
-                }"
-      )
-        input.mui-checkbox--fileType(type="checkbox", v-bind:value="fileType",
-          v-on:change="updateSelectedFileTypesHash", v-model="selectedFileTypes")
-        span {{ fileType }} &nbsp;
-
-  .zoom__day(v-for="day in selectedCommits", v-bind:key="day.date")
-    h3(v-if="info.zTimeFrame === 'week'") Week of {{ day.date }}
-    h3(v-else) {{ day.date }}
-    //- use tabindex to enable focus property on div
-    .commit-message(
-      tabindex="-1",
-      v-for="slice in day.commitResults",
-      v-bind:key="slice.hash",
-      v-bind:class="{ 'message-body active': slice.messageBody !== '' }"
-    )
-      a.message-title(v-bind:href="getSliceLink(slice)",
-        v-bind:class="!isBrokenLink(getSliceLink(slice)) ? '' : 'broken-link'", target="_blank")
-        .within-border {{ slice.messageTitle.substr(0, 50) }}
-        .not-within-border(v-if="slice.messageTitle.length > 50")
-          |{{ slice.messageTitle.substr(50) }}
-      span &nbsp; ({{ slice.insertions }} lines) &nbsp;
-      .hash
-        span {{ slice.hash.substr(0, 7) }}
-      span.fileTypeLabel(
-        v-if="containsAtLeastOneSelected(Object.keys(slice.fileTypesAndContributionMap))",
-        v-for="fileType in\
-          Object.keys(slice.fileTypesAndContributionMap)",
-        vbind:key="fileType",
-        v-bind:style="{\
-          'background-color': fileTypeColors[fileType],\
-          'color': getFontColor(fileTypeColors[fileType])\
-          }"
-      ) {{ fileType }}
-      template(v-if="slice.tags")
-        .tag(
-          v-for="tag in slice.tags",
-          vbind:key="tag",
-          tabindex="-1", v-bind:class="[`${slice.hash}`, tag]"
-        )
-          font-awesome-icon(icon="tags")
-          span &nbsp;{{ tag }}
-      a(
-        v-if="slice.messageBody !== ''",
-        v-on:click="updateExpandedCommitMessagesCount",
-        onclick="toggleNext(this)"
-      )
-        .tooltip
-          font-awesome-icon.commit-message--button(icon="ellipsis-h")
-          span.tooltip-text Click to show/hide the commit message body
-      .body(v-if="slice.messageBody !== ''")
-        pre {{ slice.messageBody }}
-          .dashed-border
+<template>
+  <div id="zoom">
+    <div class="panel-title">
+      <span>Commits Panel</span>
+    </div>
+    <div class="toolbar--multiline" v-if="filteredUser.commits.length && totalCommitMessageBodyCount">
+      <a
+        v-if="expandedCommitMessagesCount < totalCommitMessageBodyCount"
+        v-on:click="toggleAllCommitMessagesBody(true)">
+        show all commit messages
+      </a>
+      <a
+        v-if="expandedCommitMessagesCount > 0"
+        v-on:click="toggleAllCommitMessagesBody(false)">
+        hide all commit messages
+      </a>
+    </div>
+    <div class="panel-heading">
+      <div class="group-name">
+        <span v-if="info.zFilterGroup === 'groupByAuthors'">
+          {{ filteredUser.displayName }} ({{ filteredUser.name }})
+        </span>
+        <a
+          v-else
+          v-bind:href="info.zLocation"
+          target="_blank"
+          v-bind:title="'Click to open the repo'">
+            <span>{{ filteredUser.repoName }}</span>
+          </a>
+      </div>
+      <div class="author" v-if="!info.zIsMerge">
+        <span>
+          &#8627; &nbsp;
+        </span>
+        <span v-if="info.zFilterGroup === 'groupByAuthors'">
+          {{ filteredUser.repoName }}
+        </span>
+        <span v-else>
+          {{ filteredUser.displayName }} ({{ filteredUser.name }})
+        </span>
+      </div>
+      <div class="period">
+        <span>
+          &#8627; &nbsp;
+        </span>
+        <span>
+          {{ info.zSince }} to {{ info.zUntil }} &nbsp;
+        </span>
+      </div>
+    </div>
+    <div class="zoom__title">
+      <div class="zoom__title--granularity">
+        granularity: one ramp per {{ info.zTimeFrame }}
+      </div>
+      <div class="zoom__title--tags">
+        <template v-for="commit in filteredUser.commits">
+          <template v-for="commitResult in commit.commitResults">
+            <template v-if="commitResult.tags">
+              <div class="tag" :key="tag"
+                v-for="tag in commitResult.tags"
+                v-on:click="scrollToCommit(tag, `tag ${commitResult.hash}`)">
+                <font-awesome-icon icon="tags">
+                </font-awesome-icon>
+                <span>&nbsp;{{ tag }}</span>
+              </div>
+            </template>
+          </template>
+        </template>
+      </div>
+    </div>
+    <c-ramp
+      :groupby="info.zFilterGroup"
+      :user="filteredUser"
+      :tframe="info.zTimeFrame"
+      :sdate="info.zSince"
+      :udate="info.zUntil"
+      :avgsize="info.zAvgCommitSize"
+      :mergegroup="info.zIsMerge"
+      :fromramp="info.zFromRamp"
+      :filtersearch="info.zFilterSearch">
+    </c-ramp>
+    <div class="sorting mui-form--inline">
+      <div class="mui-select sort-by">
+        <select v-model="commitsSortType">
+          <option value="time">Time</option>
+          <option value="lineOfCode">LoC</option>
+        </select>
+        <label>sort by</label>
+      </div>
+      <div class="mui-select sort-order">
+        <select v-model="toReverseSortedCommits">
+          <option :value="true">Descending</option>
+          <option :value="false">Ascending</option>
+        </select>
+        <label>order</label>
+      </div>
+    </div>
+    <div class="fileTypes">
+      <div class="checkboxes mui-form--inline" v-if="fileTypes.length > 0">
+        <label style='background-color: #000000; color: #ffffff'>
+          <input type="checkbox" class="mui-checkbox--fileType" v-model="isSelectAllChecked" value="all">
+          <span>All&nbsp;</span>
+        </label>
+        <label
+          v-for="fileType in fileTypes"
+          v-bind:key="fileType"
+          v-bind:style="{
+            'background-color': fileTypeColors[fileType],
+            'color': getFontColor(fileTypeColors[fileType])
+          }">
+          <input type="checkbox" class="mui-checkbox--fileType" v-bind:value="fileType"
+            v-on:change="updateSelectedFileTypesHash" v-model="selectedFileTypes">
+          <span>{{ fileType }} &nbsp;</span>
+        </label>
+      </div>
+    </div>
+    <div class="zoom__day" v-for="day in selectedCommits" v-bind:key="day.date">
+      <h3 v-if="info.zTimeFrame === 'week'">Week of {{ day.date }}</h3>
+      <h3 v-else>{{ day.date }}</h3>
+      <div class="commit-message" tabindex="-1"
+        v-for="slice in day.commitResults"
+        v-bind:key="slice.hash"
+        v-bind:class="{ 'message-body active': slice.messageBody !== '' }">
+        <a :href="getSliceLink(slice)" class="message-title"
+          v-bind:class="!isBrokenLink(getSliceLink(slice)) ? '' : 'broken-link'"
+          target="_blank">
+          <div class="within-border">
+            {{ slice.messageTitle.substr(0, 50) }}
+            </div>
+          <div class="not-within-border" v-if="slice.messageTitle.length > 50">
+            |{{ slice.messageTitle.substr(50) }}
+          </div>
+        </a>
+        <span>
+          &nbsp; ({{ slice.insertions }} lines) &nbsp;
+        </span>
+        <div class="hash">
+          <span>{{ slice.hash.substr(0, 7) }}</span>
+        </div>
+        <div class="fileTypeLabelDiv" v-if="containsAtLeastOneSelected(Object.keys(slice.fileTypesAndContributionMap))">
+          <span class="fileTypeLabel"
+            :key="fileType"
+            v-for="fileType in Object.keys(slice.fileTypesAndContributionMap)"
+            :style="{
+              'background-color': fileTypeColors[fileType],
+              'color': getFontColor(fileTypeColors[fileType])
+            }">
+            {{ fileType }}
+        </span>
+        </div>
+        <template v-if="slice.tags">
+          <div class="tag"
+            :key="tag"
+            v-for="tag in slice.tags"
+            tabindex="-1"
+            :class="[`${slice.hash}`, tag]">
+            <font-awesome-icon icon="tags">
+            </font-awesome-icon>
+            <span>&nbsp;{{ tag }}</span>
+          </div>
+        </template>
+        <a
+          v-if="slice.messageBody !== ''"
+          v-on:click="updateExpandedCommitMessagesCount"
+          onclick="toggleNext(this)">
+          <div class="tooltip">
+            <font-awesome-icon icon="ellipsis-h" class="commit-message--button">
+            </font-awesome-icon>
+            <span class="tooltip-text">
+              Click to show/hide the commit message body
+            </span>
+          </div>
+        </a>
+        <div class="body" v-if="slice.messageBody !== ''">
+          <pre>
+            {{ slice.messageBody }}
+            <div class="dashed-border"></div>
+          </pre>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
