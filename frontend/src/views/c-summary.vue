@@ -882,6 +882,7 @@ export default {
 
   .summary-picker {
     align-items: center;
+    color: #DBE2E9;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
@@ -889,6 +890,7 @@ export default {
 
     &__section {
       align-items: inherit;
+      color: #DBE2E9;
       display: flex;
       flex: 0 1 auto;
       flex-flow: inherit;
@@ -1071,13 +1073,13 @@ export default {
   }
 
   .active-icon {
-    background-color: mui-color('green');
+    background-color: #FFFF00;
     border-radius: 2px;
-    color: mui-color('white');
+    color: #DBE2E9;
   }
 
   .active-background {
-    background-color: mui-color('yellow', '200');
+    background-color: #FFA000;
   }
 }
 </style>

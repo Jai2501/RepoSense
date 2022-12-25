@@ -140,7 +140,7 @@ export default {
 /* Ramp */
 .ramp {
   $height: 3rem;
-  background-color: mui-color('blue', '50');
+  background-color: #BABABA;
   font-size: 100%;
   height: $height;
   overflow: hidden;

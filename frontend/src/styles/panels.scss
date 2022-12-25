@@ -6,6 +6,8 @@
 }
 
 #app-wrapper {
+  background-color: #2E3033;
+  color: #DBE2E9;
   display: flex;
   height: 100vh;
   left: 0;
@@ -77,7 +79,7 @@
 }
 
 .hash {
-  background-color: mui-color('grey', '200');
+  background-color: #000;
   border-radius: 5px;
   display: inline-block;
   margin: 0 5px 5px 0;

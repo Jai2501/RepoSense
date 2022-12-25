@@ -834,6 +834,7 @@ export default {
       background-color: mui-color('github', 'title-background');
       border: 1px solid mui-color('github', 'border');
       border-radius: 4px 4px 0 0;
+      color: #000;
       display: flex;
       flex-wrap: wrap;
       font-size: medium;
