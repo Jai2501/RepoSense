@@ -141,6 +141,7 @@
 
 .sorting {
   align-items: center;
+  color: #DBE2E9;
   display: flex;
   margin-top: 1.0rem;
 
@@ -150,10 +151,12 @@
   }
 
   select {
+    color: #DBE2E9;
     @include medium-font;
   }
 
   label {
+    color: #DBE2E9;
     @include medium-font;
     overflow-y: hidden;
   }

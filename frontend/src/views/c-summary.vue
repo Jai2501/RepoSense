@@ -909,6 +909,7 @@ export default {
 
     .mui-textfield,
     .mui-select {
+      color: #DBE2E9;
       margin: .5rem;
       padding-right: 10px;
     }
@@ -927,15 +928,18 @@ export default {
 
     .search_box {
       align-items: center;
+      color: #DBE2E9;
       display: flex;
     }
 
     input {
+      color: #DBE2E9;
       font-size: .75rem;
       padding-right: 10px;
     }
 
     label {
+      color: #DBE2E9;
       font-size: .75rem;
       overflow-y: hidden;
       text-align: left;
@@ -944,6 +948,7 @@ export default {
 
     input,
     select {
+      color: #DBE2E9;
       font-size: .75rem;
     }
   }
