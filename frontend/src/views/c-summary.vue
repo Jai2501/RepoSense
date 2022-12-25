@@ -882,6 +882,7 @@ export default {
 
   .summary-picker {
     align-items: center;
+    color: #DBE2E9;
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
@@ -889,6 +890,7 @@ export default {
 
     &__section {
       align-items: inherit;
+      color: #DBE2E9;
       display: flex;
       flex: 0 1 auto;
       flex-flow: inherit;
@@ -907,6 +909,7 @@ export default {
 
     .mui-textfield,
     .mui-select {
+      color: #DBE2E9;
       margin: .5rem;
       padding-right: 10px;
     }
@@ -925,15 +928,18 @@ export default {
 
     .search_box {
       align-items: center;
+      color: #DBE2E9;
       display: flex;
     }
 
     input {
+      color: #DBE2E9;
       font-size: .75rem;
       padding-right: 10px;
     }
 
     label {
+      color: #DBE2E9;
       font-size: .75rem;
       overflow-y: hidden;
       text-align: left;
@@ -942,6 +948,7 @@ export default {
 
     input,
     select {
+      color: #DBE2E9;
       font-size: .75rem;
     }
   }
@@ -1071,13 +1078,13 @@ export default {
   }
 
   .active-icon {
-    background-color: mui-color('green');
+    background-color: #FFFF00;
     border-radius: 2px;
-    color: mui-color('white');
+    color: #DBE2E9;
   }
 
   .active-background {
-    background-color: mui-color('yellow', '200');
+    background-color: #FFA000;
   }
 }
 </style>

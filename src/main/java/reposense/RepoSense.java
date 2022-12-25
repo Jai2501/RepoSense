@@ -53,6 +53,7 @@ public class RepoSense {
      * Additional flags are provided by the user in {@code args}.
      */
     public static void main(String[] args) {
+        
         try {
             TimeUtil.startTimer();
             CliArguments cliArguments = ArgsParser.parse(args);

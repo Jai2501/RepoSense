@@ -467,8 +467,9 @@ export default {
 
     &.active {
       .body {
-        background-color: mui-color('white');
+        background-color: #BABABA;
         border: 1px solid mui-color('grey', '700');
+        color: #fff;
         display: grid;
         margin: .25rem 0 .25rem 0;
         overflow-x: auto;
@@ -479,7 +480,7 @@ export default {
           position: relative;
 
           .dashed-border {
-            border-right: 1px dashed mui-color('grey', '500'); // 72nd character line
+            border-right: 1px dashed #DBE2E9; // 72nd character line
             height: 100%;
             pointer-events: none;
             position: absolute;
