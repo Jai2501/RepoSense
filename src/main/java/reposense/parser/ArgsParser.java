@@ -68,6 +68,8 @@ public class ArgsParser {
     public static final String[] TEST_MODE_FLAG = new String[] {"--test-mode"};
     public static final String[] FRESH_CLONING_FLAG = new String[] {"--fresh-cloning"};
 
+    public static final String[] JSON_PRETTY_PRINT_FLAG = new String[] {"--use-json-pretty-printing", "-pp"};
+
     private static final Logger logger = LogsManager.getLogger(ArgsParser.class);
 
     private static final String PROGRAM_USAGE = "java -jar RepoSense.jar";
@@ -108,6 +110,11 @@ public class ArgsParser {
                 .addArgumentGroup(MESSAGE_HEADER_TESTING);
 
         // Boolean flags
+        parser.addArgument(JSON_PRETTY_PRINT_FLAG)
+                .dest(JSON_PRETTY_PRINT_FLAG[0])
+                .action(Arguments.storeTrue())
+                .help("A flag to create JSON files by utilizing pretty printing.");
+
         parser.addArgument(HELP_FLAGS)
                 .help("Show help message.")
                 .action(new HelpArgumentAction());
@@ -284,6 +291,8 @@ public class ArgsParser {
             boolean shouldPerformShallowCloning = results.get(SHALLOW_CLONING_FLAGS[0]);
             boolean shouldFindPreviousAuthors = results.get(FIND_PREVIOUS_AUTHORS_FLAGS[0]);
 
+            boolean isPrettyPrintingRequired = results.get(JSON_PRETTY_PRINT_FLAG[0]);
+
             // Report config is ignored if --repos is provided
             if (locations == null) {
                 Path reportConfigFilePath = configFolderPath.resolve(ReportConfigJsonParser.REPORT_CONFIG_FILENAME);
@@ -368,7 +377,8 @@ public class ArgsParser {
                 return new LocationsCliArguments(locations, outputFolderPath, assetsFolderPath, sinceDate, untilDate,
                         isSinceDateProvided, isUntilDateProvided, numCloningThreads, numAnalysisThreads, formats,
                         shouldIncludeLastModifiedDate, shouldPerformShallowCloning, isAutomaticallyLaunching,
-                        isStandaloneConfigIgnored, isFileSizeLimitIgnored, zoneId, shouldFindPreviousAuthors);
+                        isStandaloneConfigIgnored, isFileSizeLimitIgnored, zoneId, shouldFindPreviousAuthors,
+                        isPrettyPrintingRequired);
             }
 
             if (configFolderPath.equals(EMPTY_PATH)) {
@@ -384,7 +394,7 @@ public class ArgsParser {
                     isSinceDateProvided, isUntilDateProvided, numCloningThreads, numAnalysisThreads, formats,
                     shouldIncludeLastModifiedDate, shouldPerformShallowCloning, isAutomaticallyLaunching,
                     isStandaloneConfigIgnored, isFileSizeLimitIgnored, zoneId, reportConfig, shouldFindPreviousAuthors,
-                    isTestMode, shouldPerformFreshCloning);
+                    isTestMode, shouldPerformFreshCloning, isPrettyPrintingRequired);
         } catch (HelpScreenException hse) {
             throw hse;
         } catch (ArgumentParserException ape) {

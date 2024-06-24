@@ -247,6 +247,18 @@ Note: If the end date is not specified, the date of generating the report will b
 
 <!-- ------------------------------------------------------------------------------------------------------ -->
 
+### `--use-json-pretty-printing`, `-pp`
+**`--use-json-pretty-printing`**: Improves the formatting of the created JSON Files to improve readability.
+* Alias: `-pp`
+* Example:`--use-json-pretty-printing` or `-pp`
+
+<box type="info" seamless>
+
+Note: If this flag is not used, the data in the JSON files would be formatted in a single line, making it hard to read.
+</box>
+
+<!-- ------------------------------------------------------------------------------------------------------ -->
+
 ### `--version`, `-V`
 
 **`--version`**: Shows the version of RepoSense.
